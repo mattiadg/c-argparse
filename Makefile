@@ -12,12 +12,14 @@ clean:
 	rm -rf $(BUILD)/*
 	rmdir $(BUILD)
 
-argument_parser: $(SRC)/argument_parser.c
+$(BUILD)/argument_parser.o: $(SRC)/argument_parser.c
 	@mkdir -p $(BUILD)
-	$(CC_OBJ) $(SRC)/argument_parser.c -o $(BUILD)/$@.o
+	$(CC_OBJ) $(SRC)/argument_parser.c -o $@
 
-test_parser: argument_parser $(TEST_SRC)/test_parser.c
+$(TEST_EXE)/test_parser.o: $(TEST_SRC)/test_parser.c
 	@mkdir -p $(TEST_EXE)
-	$(CC_OBJ) $(TEST_SRC)/test_parser.c -o $(TEST_EXE)/$@.o
+	$(CC_OBJ) $(TEST_SRC)/test_parser.c -o $@
+
+test_parser: $(BUILD)/argument_parser.o $(TEST_EXE)/test_parser.o
 	$(CC) $(TEST_EXE)/$@.o $(BUILD)/argument_parser.o -o $(TEST_EXE)/$@
 	./$(TEST_EXE)/$@
