@@ -1,4 +1,7 @@
 #ifndef ARGUMENT_PARSER_H
+#define ARGUMENT_PARSER_H
+
+#define MAX_NAME_LENGTH 20 
 
 typedef struct {
     char* name;

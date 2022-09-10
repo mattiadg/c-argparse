@@ -9,10 +9,10 @@ int all_tests() {
 
 int test_init_parser(){
     Parser parser = init_parser("a name");
-    _assert(!strncmp(parser.name, "a name", 7));
+    _assert(!strncmp(parser.name, "a name", strlen("a name")));
     _assert(parser.positional_args == NULL);
     _assert(parser.optional_args == NULL);
-    return 0;
+
 }
 
 int main(int argc, char** argv) {
