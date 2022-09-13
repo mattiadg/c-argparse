@@ -3,6 +3,15 @@
 #include <string.h>
 #include "argument_parser.h"
 
+/**
+ * Auxiliary structures
+ */
+
+/**
+ * @brief Pointers to the fields needed to define a dynamic array. 
+ * Used for dynamic polymorphism of the arrays in the parser struct.
+ * 
+ */
 struct dynamic_string_array {
     char ***arr;
     int *num;
@@ -17,6 +26,16 @@ void maybe_increase_capacity(char ***vec, int* num, int* capacity);
 void _add_argument(char ***vec, int* num, const char* argument, errors *error_var);
 struct dynamic_string_array choose_argument_kind(Parser *p, const char* argument);
 
+/**
+ * Public methods
+ */
+
+/**
+ * @brief Create a new argument parser instance by providing the name of the parser
+ * 
+ * @param name used for visualization purposes
+ * @return Parser 
+ */
 Parser init_parser(const char* name) {
     Parser p;
     if (name == NULL) {
@@ -35,6 +54,11 @@ Parser init_parser(const char* name) {
     return p;
 }
 
+/**
+ * @brief destructor for Parser
+ * 
+ * @param p 
+ */
 void cleanup_parser(Parser* p) {
     if (p->name != NULL) {
         free(p->name);
@@ -53,6 +77,13 @@ void cleanup_parser(Parser* p) {
     }
 }
 
+/**
+ * @brief Add an argument to the argument parser
+ * 
+ * @param p 
+ * @param argument argument name. Starts with "-" if optional argument, or with alphabetic characters if positional.
+ * @param t 
+ */
 void add_argument(Parser *p, const char* argument, argument_types t) {
     struct dynamic_string_array s = choose_argument_kind(p, argument);
     maybe_increase_capacity(s.arr, s.num, s.capacity);
@@ -60,6 +91,7 @@ void add_argument(Parser *p, const char* argument, argument_types t) {
     (*(s.num))++;
 }
 
+// Private functions
 struct dynamic_string_array choose_argument_kind(Parser* p, const char* argument) {
     struct dynamic_string_array s;
     if (argument[0] == '-') {
