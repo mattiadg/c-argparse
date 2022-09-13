@@ -111,12 +111,12 @@ int test_add_6_optional_argument(){
     add_argument(&parser, "-d", STR);
     add_argument(&parser, "-e", STR);
     add_argument(&parser, "-f", STR);
-    _assert_str_eq(parser.positional_args[0], "-a", strlen("-a"));
-    _assert_str_eq(parser.positional_args[1], "-b", strlen("-b"));
-    _assert_str_eq(parser.positional_args[2], "-c", strlen("-c"));
-    _assert_str_eq(parser.positional_args[3], "-d", strlen("-d"));
-    _assert_str_eq(parser.positional_args[4], "-e", strlen("-e"));
-    _assert_str_eq(parser.positional_args[5], "-f", strlen("-f"));
+    _assert_str_eq(parser.optional_args[0], "-a", strlen("-a"));
+    _assert_str_eq(parser.optional_args[1], "-b", strlen("-b"));
+    _assert_str_eq(parser.optional_args[2], "-c", strlen("-c"));
+    _assert_str_eq(parser.optional_args[3], "-d", strlen("-d"));
+    _assert_str_eq(parser.optional_args[4], "-e", strlen("-e"));
+    _assert_str_eq(parser.optional_args[5], "-f", strlen("-f"));
     cleanup_parser(&parser);
     return 0;
 }
