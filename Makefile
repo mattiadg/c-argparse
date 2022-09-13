@@ -9,8 +9,7 @@ TEST_EXE = build/test
 .PHONY: clean
 
 clean:
-	rm -rf $(BUILD)/*
-	rmdir $(BUILD)
+	find . -name '*.o' -delete
 
 $(BUILD)/argument_parser.o: $(SRC)/argument_parser.c
 	@mkdir -p $(BUILD)
