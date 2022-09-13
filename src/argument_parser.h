@@ -4,8 +4,9 @@
 #define MAX_NAME_LENGTH 20
 
 #define DEFAULT_POS_ARGS 5
+#define DEFAULT_OPT_ARGS 5
 
-enum errors {NULL_NAME, SPACE_INSUFFICIENT};
+typedef enum {NULL_NAME, SPACE_INSUFFICIENT} errors;
 typedef enum {STR, INT, FLOAT} argument_types;
 
 typedef struct {
@@ -14,7 +15,9 @@ typedef struct {
     int num_positional_args;
     int capacity_positional_args;
     char** optional_args;
-    enum errors error_code;
+    int num_optional_args;
+    int capacity_optional_args;
+    errors error_code;
 } Parser;
 
 Parser init_parser(const char* name);

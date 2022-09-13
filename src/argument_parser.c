@@ -12,29 +12,40 @@ Parser init_parser(const char* name) {
     }
     p.name = malloc(strlen(name) * sizeof *name);
     strncpy(p.name, name, strlen(name));
-    p.positional_args = NULL;
+    p.positional_args = calloc(DEFAULT_POS_ARGS, sizeof p.positional_args);
     p.num_positional_args = 0;
     p.capacity_positional_args = DEFAULT_POS_ARGS;
-    p.optional_args = NULL;
+    p.optional_args = calloc(DEFAULT_POS_ARGS, sizeof p.optional_args);
+    p.num_optional_args = 0;
+    p.capacity_optional_args = DEFAULT_OPT_ARGS;
     return p;
 }
 
+void maybe_increase_capacity(char ***vec, int* num, int* capacity);
+void _add_argument(char ***vec, int* num, const char* argument, errors *error_var);
+
 void add_argument(Parser *p, const char* argument, argument_types t) {
-    if (p->positional_args == NULL) {
-        p->positional_args = calloc(DEFAULT_POS_ARGS, sizeof p->positional_args);
+    maybe_increase_capacity(&p->positional_args, &p->num_positional_args, &p->capacity_positional_args);
+    _add_argument(&p->positional_args, &p->num_positional_args, argument, &p->error_code);
+    p->num_positional_args++;
+}
+
+void maybe_increase_capacity(char ***vec, int* num, int* capacity) {
+    if (*num >= *capacity) {
+        *vec = realloc(*vec, 2*(*capacity)*sizeof(*vec));
+        *capacity *= 2;
     }
-    if (p->num_positional_args >= p->capacity_positional_args) {
-        p->positional_args = realloc(p->positional_args, 2*p->capacity_positional_args*sizeof(p->positional_args));
-        p->capacity_positional_args *= 2;
-    }
-    int i = p->num_positional_args;
-    p->positional_args[i] = calloc((strlen(argument)), sizeof *p->positional_args);
-    if (p->positional_args[i] == NULL) {
-        p->error_code = SPACE_INSUFFICIENT;
+}
+
+void _add_argument(char ***vec, int* num, const char* argument, errors *error_var) {
+    int i = *num;
+    int src_len = strlen(argument);
+    (*vec)[i] = calloc(src_len, sizeof *vec[i]);
+    if ((*vec)[i] == NULL) {
+        *error_var = SPACE_INSUFFICIENT;
         return;
     }
-    strncpy(p->positional_args[i], argument, strlen(argument));
-    p->num_positional_args++;
+    strncpy((*vec)[i], argument, src_len);
 }
 
 void cleanup_parser(Parser* p) {

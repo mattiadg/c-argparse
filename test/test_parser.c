@@ -11,6 +11,9 @@ int test_init_parser_null_name();
 int test_add_positional_argument();
 int test_add_2_positional_argument();
 int test_add_6_positional_argument();
+int test_add_optional_argument();
+int test_add_2_optional_argument();
+int test_add_6_optional_argument();
 
 /**
  * Function definitions
@@ -27,14 +30,15 @@ int all_tests() {
     _verify(test_add_positional_argument);
     _verify(test_add_2_positional_argument);
     _verify(test_add_6_positional_argument);
+    _verify(test_add_optional_argument);
+    _verify(test_add_2_optional_argument);
+    _verify(test_add_6_optional_argument);
     return 0;
 }
 
 int test_init_parser(){
     Parser parser = init_parser("a name");
     _assert(!strncmp(parser.name, "a name", strlen("a name")));
-    _assert(parser.positional_args == NULL);
-    _assert(parser.optional_args == NULL);
     return 0;
 }
 
@@ -48,7 +52,7 @@ int test_init_parser_null_name(){
 int test_add_positional_argument(){
     Parser parser = init_parser("a name");
     add_argument(&parser, "argument", INT);
-    _assert(!strncmp(parser.positional_args[0], "argument", strlen("argument")));
+    _assert_str_eq(parser.positional_args[0], "argument", strlen("argument"));
     cleanup_parser(&parser);
     return 0;
 }
@@ -57,8 +61,8 @@ int test_add_2_positional_argument(){
     Parser parser = init_parser("a name");
     add_argument(&parser, "argument", INT);
     add_argument(&parser, "another", STR);
-    _assert(!strncmp(parser.positional_args[0], "argument", strlen("argument")));
-    _assert(!strncmp(parser.positional_args[1], "another", strlen("another")));
+    _assert_str_eq(parser.positional_args[0], "argument", strlen("argument"));
+    _assert_str_eq(parser.positional_args[1], "another", strlen("another"));
     cleanup_parser(&parser);
     return 0;
 }
@@ -71,12 +75,48 @@ int test_add_6_positional_argument(){
     add_argument(&parser, "d", STR);
     add_argument(&parser, "e", STR);
     add_argument(&parser, "f", STR);
-    _assert(!strncmp(parser.positional_args[0], "a", strlen("a")));
-    _assert(!strncmp(parser.positional_args[1], "b", strlen("b")));
-    _assert(!strncmp(parser.positional_args[2], "c", strlen("c")));
-    _assert(!strncmp(parser.positional_args[3], "d", strlen("d")));
-    _assert(!strncmp(parser.positional_args[4], "e", strlen("e")));
-    _assert(!strncmp(parser.positional_args[5], "f", strlen("f")));
+    _assert_str_eq(parser.positional_args[0], "a", strlen("a"));
+    _assert_str_eq(parser.positional_args[1], "b", strlen("b"));
+    _assert_str_eq(parser.positional_args[2], "c", strlen("c"));
+    _assert_str_eq(parser.positional_args[3], "d", strlen("d"));
+    _assert_str_eq(parser.positional_args[4], "e", strlen("e"));
+    _assert_str_eq(parser.positional_args[5], "f", strlen("f"));
+    cleanup_parser(&parser);
+    return 0;
+}
+
+int test_add_optional_argument(){
+    Parser parser = init_parser("a name");
+    add_argument(&parser, "-argument", INT);
+    _assert_str_eq(parser.optional_args[0], "-argument", strlen("-argument"));
+    cleanup_parser(&parser);
+    return 0;
+}
+
+int test_add_2_optional_argument(){
+    Parser parser = init_parser("a name");
+    add_argument(&parser, "-argument", INT);
+    add_argument(&parser, "-another", STR);
+    _assert_str_eq(parser.optional_args[0], "-argument", strlen("-argument"));
+    _assert_str_eq(parser.optional_args[1], "-another", strlen("-another"));
+    cleanup_parser(&parser);
+    return 0;
+}
+
+int test_add_6_optional_argument(){
+    Parser parser = init_parser("a name");
+    add_argument(&parser, "-a", INT);
+    add_argument(&parser, "-b", STR);
+    add_argument(&parser, "-c", STR);
+    add_argument(&parser, "-d", STR);
+    add_argument(&parser, "-e", STR);
+    add_argument(&parser, "-f", STR);
+    _assert_str_eq(parser.positional_args[0], "-a", strlen("-a"));
+    _assert_str_eq(parser.positional_args[1], "-b", strlen("-b"));
+    _assert_str_eq(parser.positional_args[2], "-c", strlen("-c"));
+    _assert_str_eq(parser.positional_args[3], "-d", strlen("-d"));
+    _assert_str_eq(parser.positional_args[4], "-e", strlen("-e"));
+    _assert_str_eq(parser.positional_args[5], "-f", strlen("-f"));
     cleanup_parser(&parser);
     return 0;
 }
