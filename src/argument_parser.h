@@ -6,7 +6,7 @@
 #define DEFAULT_POS_ARGS 5
 #define DEFAULT_OPT_ARGS 5
 
-typedef enum {NULL_NAME, SPACE_INSUFFICIENT} errors;
+typedef enum {OK, NULL_NAME, INVALID_ARGUMENT, SPACE_INSUFFICIENT} errors;
 typedef enum {STR, INT, FLOAT} argument_types;
 
 typedef struct {

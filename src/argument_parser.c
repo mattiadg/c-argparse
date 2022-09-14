@@ -1,10 +1,12 @@
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "argument_parser.h"
 
 /**
- * Auxiliary structures
+ * Auxiliary types
  */
 
 /**
@@ -25,6 +27,7 @@ struct dynamic_string_array {
 void maybe_increase_capacity(char ***vec, int* num, int* capacity);
 void _add_argument(char ***vec, int* num, const char* argument, errors *error_var);
 struct dynamic_string_array choose_argument_kind(Parser *p, const char* argument);
+bool is_valid_string(const char* str);
 
 /**
  * Public methods
@@ -51,6 +54,7 @@ Parser init_parser(const char* name) {
     p.optional_args = calloc(DEFAULT_OPT_ARGS, sizeof(p.optional_args));
     p.num_optional_args = 0;
     p.capacity_optional_args = DEFAULT_OPT_ARGS;
+    p.error_code = OK;
     return p;
 }
 
@@ -65,13 +69,17 @@ void cleanup_parser(Parser* p) {
     }
     if (p->positional_args != NULL) {
         for (int i = 0; i < p->num_positional_args; i++){
-            free(p->positional_args[i]);
+            if (p->positional_args[i] != NULL) {
+                free(p->positional_args[i]);
+            }
         }
         free(p->positional_args);
     }
     if (p->optional_args != NULL) {
         for (int i = 0; i < p->num_optional_args; i++){
-            free(p->optional_args[i]);
+            if (p->optional_args[i] != NULL) {
+                free(p->optional_args[i]);
+            }
         }
         free(p->optional_args);
     }
@@ -86,6 +94,11 @@ void cleanup_parser(Parser* p) {
  */
 void add_argument(Parser *p, const char* argument, argument_types t) {
     struct dynamic_string_array s = choose_argument_kind(p, argument);
+    
+    if (p->error_code == INVALID_ARGUMENT) {
+        return;
+    }
+    
     maybe_increase_capacity(s.arr, s.num, s.capacity);
     _add_argument(s.arr, s.num, argument, &p->error_code);
     (*(s.num))++;
@@ -94,6 +107,11 @@ void add_argument(Parser *p, const char* argument, argument_types t) {
 // Private functions
 struct dynamic_string_array choose_argument_kind(Parser* p, const char* argument) {
     struct dynamic_string_array s;
+    if (!is_valid_string(argument)) {
+        p->error_code = INVALID_ARGUMENT;
+        return s;
+    }
+
     if (argument[0] == '-') {
         s.arr = &p->optional_args;
         s.num = &p->num_optional_args;
@@ -105,6 +123,17 @@ struct dynamic_string_array choose_argument_kind(Parser* p, const char* argument
         s.capacity = &p->capacity_positional_args;
     }
     return s;
+}
+
+bool is_valid_string(const char* str) {
+    int l = strlen(str);
+    for(int i = 0; i < l; i++) {
+        char c = str[i];
+        if (!(isalpha(c) || c == '-' || c == '_')) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void maybe_increase_capacity(char ***vec, int* num, int* capacity) {

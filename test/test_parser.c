@@ -14,6 +14,7 @@ int test_add_6_positional_argument();
 int test_add_optional_argument();
 int test_add_2_optional_argument();
 int test_add_6_optional_argument();
+int test_add_invalid_argument();
 
 /**
  * Function definitions
@@ -33,6 +34,7 @@ int all_tests() {
     _verify(test_add_optional_argument);
     _verify(test_add_2_optional_argument);
     _verify(test_add_6_optional_argument);
+    _verify(test_add_invalid_argument);
     return 0;
 }
 
@@ -117,6 +119,14 @@ int test_add_6_optional_argument(){
     _assert_str_eq(parser.optional_args[3], "-d", strlen("-d"));
     _assert_str_eq(parser.optional_args[4], "-e", strlen("-e"));
     _assert_str_eq(parser.optional_args[5], "-f", strlen("-f"));
+    cleanup_parser(&parser);
+    return 0;
+}
+
+int test_add_invalid_argument(){
+    Parser parser = init_parser("a name");
+    add_argument(&parser, ".argument", INT);
+    _assert_primitive_eq(parser.error_code, INVALID_ARGUMENT);
     cleanup_parser(&parser);
     return 0;
 }
