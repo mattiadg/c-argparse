@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "argument_parser.h"
+#include "strings.h"
 
 /**
  * Auxiliary types
@@ -104,6 +105,27 @@ void add_argument(Parser *p, const char* argument, argument_types t) {
     (*(s.num))++;
 }
 
+/**
+ * @brief Produces a help string explaining how to use the program
+ * 
+ * @param p pointer to a Param struct from which to get all the needed information
+ * @return char* the help string
+ */
+char *help(Parser* p, const char* exec_name) {
+    int help_len = 1000;
+    dynstr h = make_str(p->name, help_len);
+    safe_strncat(&h, "\n\nUsage: ", 9);
+    safe_strncat(&h, exec_name, 50);
+    if (p->num_positional_args > 0) {
+        safe_strncat(&h, "\n\nPositional arguments:\n\n", 25);
+        for (int i = 0; i < p->num_positional_args; i++) {
+            safe_strncat(&h, p->positional_args[i], 50);
+            safe_strncat(&h, "\n", 1);
+        }
+    }
+    return h.str;
+}
+
 // Private functions
 struct dynamic_string_array choose_argument_kind(Parser* p, const char* argument) {
     struct dynamic_string_array s;
@@ -146,7 +168,7 @@ void maybe_increase_capacity(char ***vec, int* num, int* capacity) {
 void _add_argument(char ***vec, int* num, const char* argument, errors *error_var) {
     int i = *num;
     int src_len = strlen(argument);
-    (*vec)[i] = calloc(src_len, sizeof((*vec)[i]));
+    (*vec)[i] = calloc(src_len+1, sizeof((*vec)[i]));
     if ((*vec)[i] == NULL) {
         *error_var = SPACE_INSUFFICIENT;
         return;

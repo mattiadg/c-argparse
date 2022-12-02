@@ -11,6 +11,10 @@ TEST_EXE = build/test
 clean:
 	find . -name '*.o' -delete
 
+$(BUILD)/strings.o: $(SRC)/strings.c
+	@mkdir -p $(BUILD)
+	$(CC_OBJ) $(SRC)/strings.c -o $@
+
 $(BUILD)/argument_parser.o: $(SRC)/argument_parser.c
 	@mkdir -p $(BUILD)
 	$(CC_OBJ) $(SRC)/argument_parser.c -o $@
@@ -19,6 +23,6 @@ $(TEST_EXE)/test_parser.o: $(TEST_SRC)/test_parser.c
 	@mkdir -p $(TEST_EXE)
 	$(CC_OBJ) $(TEST_SRC)/test_parser.c -o $@
 
-test_parser: $(BUILD)/argument_parser.o $(TEST_EXE)/test_parser.o
-	$(CC) $(TEST_EXE)/$@.o $(BUILD)/argument_parser.o -o $(TEST_EXE)/$@
+test_parser: $(BUILD)/argument_parser.o $(BUILD)/strings.o $(TEST_EXE)/test_parser.o
+	$(CC) $(TEST_EXE)/$@.o $(BUILD)/argument_parser.o $(BUILD)/strings.o -o $(TEST_EXE)/$@
 	./$(TEST_EXE)/$@

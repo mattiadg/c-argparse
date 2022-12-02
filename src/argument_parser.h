@@ -2,6 +2,7 @@
 #define ARGUMENT_PARSER_H
 
 #define MAX_NAME_LENGTH 20
+#define MAX_ARGUMENT_LENGTH 10
 
 #define DEFAULT_POS_ARGS 5
 #define DEFAULT_OPT_ARGS 5
@@ -24,5 +25,6 @@ Parser init_parser(const char* name);
 void cleanup_parser(Parser* p);
 
 void add_argument(Parser *p, const char* argument, argument_types t);
+char* help(Parser *p, const char* exec_name);
 
 #endif
